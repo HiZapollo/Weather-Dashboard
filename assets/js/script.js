@@ -12,6 +12,7 @@ var historyElement = document.querySelector("#history");
 var searchBarElement = document.querySelector("#search-bar");
 var searchFormElement =  document.querySelector("#search-form");
 var todayContainerElement = document.querySelector("#today");
+var forecastContainerElement = document.querySelector("#forecast");
 
 // plugins for dayjs timezones
 dayjs.extend(window.dayjs_plugin_utc);
@@ -33,8 +34,7 @@ function getTodaysWeather(city, weather){
     var humidElement = document.createElement('p');
 
     container.setAttribute('class', 'container');
-    heading.setAttribute('class', 'todayHead');
-    iconElement.setAttribute('class', 'weatherIcon');
+    heading.setAttribute('class', 'dayHead');
     tempElement.setAttribute('class', 'weatherText');
     windElement.setAttribute('class', 'weatherText');
     humidElement.setAttribute('class', 'weatherText');
@@ -47,11 +47,69 @@ function getTodaysWeather(city, weather){
     windElement.textContent = 'Wind: '+wind+" MPH";
     humidElement.textContent = 'Humidity: '+humid+' %';
 
-
     container.append(heading,tempElement,windElement,humidElement);
 
     todayContainerElement.innerHTML = '';
     todayContainerElement.append(container);
+}
+
+function makeCard(forecast) {
+    var icon = 'https://openweathermap.org/img/w/'+forecast.weather[0].icon+'.png';
+    var iconAlt = forecast.weather[0].description;
+    var temp = forecast.main.temp;
+    var wind = forecast.wind.speed;
+    var humid = forecast.main.humidity;
+
+    var column = document.createElement('div');
+    var card = document.createElement('div');
+    var cardHead = document.createElement('h4');
+    var iconElement = document.createElement('img');
+    var tempElement = document.createElement('p');
+    var windElement = document.createElement('p');
+    var humidElement = document.createElement('p');
+
+    column.setAttribute('class', 'col-md');
+    column.classList.add("forecast-card");
+    cardHead.setAttribute('class', 'forehead');
+    tempElement.setAttribute('class', 'foretext');
+    windElement.setAttribute('class', 'foretext');
+    humidElement.setAttribute('class', 'foretext');
+
+    column.append(card);
+    card.append(cardHead,iconElement,tempElement,windElement,humidElement);
+
+    cardHead.textContent = dayjs(forecast.dt_txt).format("M/D/YYYY");
+    iconElement.setAttribute('src', icon);
+    iconElement.setAttribute('alt', iconAlt);
+    tempElement.textContent = 'Temp: '+temp+"°F";
+    windElement.textContent = 'Wind: '+wind+" MPH";
+    humidElement.textContent = 'Humidity: '+humid+' %';
+
+    forecastContainerElement.append(column);
+}
+
+function getForecast(forecast) {
+    var start = dayjs().add(1, 'day').startOf('day').unix();
+    var end = dayjs().add(6, 'day').startOf('day').unix();
+
+    var container = document.createElement('div');
+    var heading = document.createElement('h3');
+    container.setAttribute('class', 'col-12');
+    heading.setAttribute('class', 'dayHead');
+    
+    heading.textContent = '5-Day Forecast:';
+    container.append(heading);
+
+    forecastContainerElement.innerHTML = '';
+    forecastContainerElement.append(container);
+
+    for(var i = 0; i < forecast.length; i++) {
+        if (forecast[i].dt >= start && forecast[i].dt < end){
+            if(forecast[i].dt_txt.slice(11,13) == "12"){
+                makeCard(forecast[i]);
+            }
+        }
+    }
 }
 
 function getWeather(cityInput){
@@ -66,7 +124,7 @@ function getWeather(cityInput){
         })
         .then(function(data){
             getTodaysWeather(city, data.list[0], data.city.timezone);
-            //getForecast(data.list);
+            getForecast(data.list);
         })
         .catch(function(error){
             console.error(error);

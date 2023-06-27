@@ -19,10 +19,25 @@
     padding: .5rem;
 }
 
-.todayHead{
+.dayHead{
     font-weight: 700;
 }
 
 .weatherText {
+    font-size: 1.2rem;
+}
+
+.forecast-card{
+    background-color: rgb(58, 60, 78);
+    margin: 5px;
+}
+
+.forehead{
+    color: white;
+    font-weight: 700;
+}
+
+.foretext{
+    color: white;
     font-size: 1.2rem;
 }
