@@ -13,3 +13,16 @@
     width: 100%;
     padding: 0.5rem;
 }
+
+.container {
+    border: .1rem solid black;
+    padding: .5rem;
+}
+
+.todayHead{
+    font-weight: 700;
+}
+
+.weatherText {
+    font-size: 1.2rem;
+}
