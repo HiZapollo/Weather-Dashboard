@@ -6,7 +6,7 @@
 */
 var key = '231c6abe771a86ebc8c5f444b69ef6f2';
 var baseUrl = 'https://api.openweathermap.org';
-var history = [];
+var searchHistory = [];
 
 var historyElement = document.querySelector("#history");
 var searchBarElement = document.querySelector("#search-bar");
@@ -112,6 +112,39 @@ function getForecast(forecast) {
     }
 }
 
+function displayHistory() {
+    historyElement.innerHTML = '';
+
+    for(var i = searchHistory.length -1; i >= 0; i--) {
+        var btn = document.createElement('button');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('class', 'history-btn');
+
+        btn.setAttribute('data-city', searchHistory[i]);
+        btn.textContent = searchHistory[i];
+        historyElement.append(btn);
+    }
+}
+
+function addHistory(cityInput) {
+    //ensures that the input isn't already in the history
+    if(searchHistory.indexOf(cityInput) !== -1){
+        return
+    }
+    searchHistory.push(cityInput);
+
+    localStorage.setItem('history', JSON.stringify(searchHistory));
+    displayHistory();
+}
+
+function startupHistory() {
+    var rememberedHistory = localStorage.getItem('history');
+    if (rememberedHistory) {
+        searchHistory = JSON.parse(rememberedHistory);
+    }
+    displayHistory();
+}
+
 function getWeather(cityInput){
     var lat = cityInput.lat;
     var lon = cityInput.lon;
@@ -141,7 +174,7 @@ function getCoordinates(cityInput){
             if(!data[0]){
                 alert('Not Found');
             } else {
-                //addHistory(cityInput);
+                addHistory(cityInput);
                 getWeather(data[0]);
             }
         })
@@ -160,4 +193,16 @@ function handleSearchButton(event) {
     searchBarElement.value = '';
 }
 
+function handleHistoryButton(event) {
+    if(!event.target.matches('.history-btn')){
+        return;
+    }
+
+    var btn = event.target;
+    var city = btn.getAttribute('data-city');
+    getCoordinates(city);
+}
+
 searchFormElement.addEventListener("submit", handleSearchButton);
+historyElement.addEventListener("click", handleHistoryButton);
+startupHistory();
