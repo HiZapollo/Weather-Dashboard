@@ -12,7 +12,8 @@ N/A
 
 This website can be used to find general weather data for a given city on the present day, and for the next 5 days.
 
-![weather dashboard website with a search bar and history buttons with previous search results]
+![weather dashboard website with a search bar and history buttons with previous search results](https://github.com/HiZapollo/Weather-Dashboard/assets/129823817/d9706030-09fe-4ed5-a09c-be0a59ad8be8)
+
 
 
 
